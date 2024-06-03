@@ -2,18 +2,23 @@ import AuthContent from "../components/Auth/AuthContent";
 import LoadingOverlay from "../components/ui/LoadingOverlay";
 import { login } from "../util/auth";
 import { useState } from "react";
+import { useContext } from "react";
+import { AuthContext } from "../store/auth-context";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
+  const authContext = useContext(AuthContext);
+
   async function signInHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
-      await login(email, password);
+      const token = await login(email, password);
+      authContext.authenticate(token);
     } catch (error) {
       alert("Login failed! Please check your credentials.");
+      setIsAuthenticating(false);
     }
-    setIsAuthenticating(false);
   }
 
   if (isAuthenticating) {
