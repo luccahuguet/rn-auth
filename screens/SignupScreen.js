@@ -8,7 +8,11 @@ function SignupScreen() {
 
   async function signupHandler({ email, password }) {
     setIsAuthenticating(true);
-    await createUser(email, password);
+    try {
+      await createUser(email, password);
+    } catch (error) {
+      alert("Signup failed! Please check your credentials.");
+    }
     setIsAuthenticating(false);
   }
 

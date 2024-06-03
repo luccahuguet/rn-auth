@@ -8,7 +8,11 @@ function LoginScreen() {
 
   async function signInHandler({ email, password }) {
     setIsAuthenticating(true);
-    await login(email, password);
+    try {
+      await login(email, password);
+    } catch (error) {
+      alert("Login failed! Please check your credentials.");
+    }
     setIsAuthenticating(false);
   }
 
