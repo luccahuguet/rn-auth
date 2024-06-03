@@ -1,8 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { useContext } from "react";
-import { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen";
@@ -11,7 +10,6 @@ import { Colors } from "./constants/styles";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import IconButton from "./components/ui/IconButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 
 // Keep the splash screen visible while we fetch resources
@@ -77,12 +75,17 @@ function Root() {
 
   useEffect(() => {
     async function fetchToken() {
-      const token = await AsyncStorage.getItem("token");
-      if (token) {
-        auth.authenticate(token);
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+          auth.authenticate(token);
+        }
+      } catch (error) {
+        console.error("Failed to fetch the token:", error);
+      } finally {
+        setIsTryingLogin(false);
+        await SplashScreen.hideAsync();
       }
-      setIsTryingLogin(false);
-      await SplashScreen.hideAsync();
     }
 
     fetchToken();
